@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-maroon: #800020;
+  --color-cream: #F5F5DC;
+  --color-gold: #D4AF37;
+  --color-tan: #C2B280;
+  --color-maroon-dark: #600018;
+}
+
+@layer base {
+  body {
+    @apply bg-cream text-maroon font-sans;
+  }
+}
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: minmax(100px, auto);
+  gap: 1.5rem;
+}
+
