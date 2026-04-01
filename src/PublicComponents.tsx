@@ -1,246 +1,85 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MapPin, Clock, Phone, MessageSquare, Instagram, Music2, Send, Mail, X, CheckCircle2, AlertCircle, Calendar, ShieldCheck } from 'lucide-react';
+import { MapPin, Clock, Phone, MessageSquare, Instagram, Music2, Send, Mail, X, CheckCircle2, AlertCircle, Calendar, ShieldCheck, LayoutDashboard, CreditCard, Zap, Globe, Layers } from 'lucide-react';
 import { toast } from 'sonner';
 import { CLASSES, INSTRUCTORS } from './constants';
 
-export const PublicSchedule = ({ 
-  isInteractive = false, 
-  credits = 0, 
-  bookedClasses = [], 
-  onBook = () => {} 
-}: { 
-  isInteractive?: boolean, 
-  credits?: number, 
-  bookedClasses?: string[], 
-  onBook?: (classId: string) => void 
-}) => {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-  const hours = Array.from({ length: 10 }, (_, i) => i + 9);
-
-  const [selectedClass, setSelectedClass] = React.useState<any>(null);
-  const [showModal, setShowModal] = React.useState(false);
-
-  const getClassesForDay = (day: string) => CLASSES.filter(c => c.day === day);
-
-  const handleBookClick = (cls: any) => {
-    if (!isInteractive) return;
-    setSelectedClass(cls);
-    setShowModal(true);
-  };
-
-  const confirmBooking = () => {
-    if (selectedClass) {
-      onBook(selectedClass.id);
-      setShowModal(false);
-      setSelectedClass(null);
+export const FeatureGrid = () => {
+  const features = [
+    {
+      title: "Automated Scheduling",
+      description: "Proprietary dynamic grid with real-time conflict detection and resource optimization.",
+      icon: Zap,
+      tag: "CORE ENGINE",
+      status: "OPTIMAL"
+    },
+    {
+      title: "Multi-tenant Cloud",
+      description: "Architected for scale. Manage multiple studio branches from a single executive CEO dashboard.",
+      icon: Layers,
+      tag: "INFRASTRUCTURE",
+      status: "SCALABLE"
+    },
+    {
+      title: "Global Payments",
+      description: "Integrated checkout and automated financial reconciliation managed by S-sync Finance.",
+      icon: CreditCard,
+      tag: "FINTECH",
+      status: "SECURE"
     }
-  };
+  ];
 
   return (
-    <section id="schedule" className={`py-20 px-8 ${isInteractive ? 'bg-transparent' : 'bg-white'}`}>
+    <section id="features" className="py-24 px-8 bg-white">
       <div className="max-w-7xl mx-auto">
-        {!isInteractive && (
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black italic tracking-tighter text-maroon mb-4">Weekly Schedule</h2>
-            <p className="text-maroon/60 max-w-2xl mx-auto">
-              Join our high-energy classes led by industry professionals. Find your rhythm and book your spot today.
-            </p>
-          </div>
-        )}
-
-        <div className="overflow-x-auto pb-8">
-          <div className="grid grid-cols-[80px_repeat(5,1fr)] min-w-[1000px] border border-maroon/10 rounded-3xl overflow-hidden shadow-sm bg-white">
-            {/* Header */}
-            <div className="h-16 bg-maroon/5 border-b border-maroon/10" />
-            {days.map(day => (
-              <div key={day} className="h-16 bg-maroon/5 flex items-center justify-center font-black italic text-maroon border-b border-l border-maroon/10">
-                {day}
-              </div>
-            ))}
-
-            {/* Grid Body */}
-            {hours.map(hour => (
-              <React.Fragment key={hour}>
-                <div className="h-24 flex items-center justify-center text-xs font-mono text-maroon/40 border-b border-maroon/10">
-                  {hour.toString().padStart(2, '0')}:00
-                </div>
-                {days.map(day => {
-                  const dayClasses = getClassesForDay(day).filter(c => parseInt(c.startTime.split(':')[0]) === hour);
-                  return (
-                    <div key={`${day}-${hour}`} className="h-24 border-b border-l border-maroon/10 relative bg-maroon/[0.01] group">
-                      {dayClasses.map(cls => {
-                        const isBooked = bookedClasses.includes(cls.id);
-                        return (
-                          <motion.div
-                            key={cls.id}
-                            whileHover={!isBooked ? { scale: 1.02 } : {}}
-                            onClick={() => !isBooked && handleBookClick(cls)}
-                            className={`absolute inset-1 rounded-xl p-3 text-white shadow-lg z-10 flex flex-col justify-between transition-all ${isBooked ? 'opacity-50 grayscale cursor-not-allowed' : 'cursor-pointer'}`}
-                            style={{ backgroundColor: isBooked ? '#4A4A4A' : cls.color }}
-                          >
-                            <div>
-                              <div className="flex justify-between items-start">
-                                <p className="text-xs font-black italic leading-tight">{cls.title}</p>
-                                {isBooked && <CheckCircle2 size={12} className="text-white" />}
-                              </div>
-                              <div className="flex items-center gap-1 mt-1 opacity-80">
-                                <MapPin size={10} />
-                                <p className="text-[10px] font-medium">{cls.location}</p>
-                              </div>
-                            </div>
-                            <button 
-                              disabled={isBooked}
-                              className={`mt-auto w-full py-1 rounded-lg text-[8px] font-bold uppercase tracking-widest transition-colors ${
-                                isBooked 
-                                  ? 'bg-black/20 text-white/50' 
-                                  : 'bg-white/20 hover:bg-white/30 text-white'
-                              }`}
-                            >
-                              {isBooked ? 'Booked' : 'Book Now'}
-                            </button>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                  );
-                })}
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Confirmation Modal */}
-      <AnimatePresence>
-        {showModal && selectedClass && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-maroon/40 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-cream w-full max-w-md rounded-[40px] overflow-hidden shadow-2xl border border-maroon/10"
-            >
-              <div className="bg-maroon p-8 text-cream relative">
-                <button 
-                  onClick={() => setShowModal(false)}
-                  className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-full transition-colors"
-                >
-                  <X size={20} />
-                </button>
-                <h3 className="text-3xl font-black italic tracking-tighter">Confirm Booking</h3>
-                <p className="text-cream/60 text-xs uppercase tracking-widest mt-2">Class Reservation</p>
-              </div>
-              
-              <div className="p-8 space-y-6">
-                <div className="flex items-center gap-6 p-6 bg-white rounded-3xl border border-maroon/5">
-                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg" style={{ backgroundColor: selectedClass.color }}>
-                    <Calendar size={32} />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-black italic text-maroon">{selectedClass.title}</h4>
-                    <div className="flex items-center gap-2 text-maroon/60 text-xs mt-1">
-                      <Clock size={12} />
-                      <span>{selectedClass.day}, {selectedClass.startTime}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-maroon/60 text-xs mt-1">
-                      <MapPin size={12} />
-                      <span>{selectedClass.location}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-maroon/5 rounded-2xl">
-                  <span className="text-xs font-bold uppercase tracking-widest text-maroon/40">Cost</span>
-                  <span className="font-black italic text-maroon">1 Credit</span>
-                </div>
-
-                {credits > 0 ? (
-                  <div className="space-y-4">
-                    <p className="text-sm text-maroon/60 text-center">
-                      You have <span className="font-bold text-maroon">{credits} credits</span> remaining.
-                    </p>
-                    <button 
-                      onClick={confirmBooking}
-                      className="w-full py-5 bg-maroon text-cream rounded-2xl font-black italic text-xl shadow-xl hover:bg-maroon-dark transition-all flex items-center justify-center gap-3"
-                    >
-                      <ShieldCheck size={20} />
-                      CONFIRM BOOKING
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-4 bg-red-50 text-red-600 rounded-2xl border border-red-100">
-                      <AlertCircle size={20} />
-                      <p className="text-sm font-bold">Not enough credits</p>
-                    </div>
-                    <p className="text-xs text-maroon/60 text-center px-4">
-                      You've used all your credits. Purchase a new pack to continue booking classes.
-                    </p>
-                    <button 
-                      onClick={() => {
-                        setShowModal(false);
-                        // In a real app, we'd navigate to the buy page
-                        toast.error("Redirecting to Buy Class Pack page...");
-                      }}
-                      className="w-full py-5 bg-gold text-white rounded-2xl font-black italic text-xl shadow-xl hover:opacity-90 transition-all"
-                    >
-                      BUY CLASS PACK
-                    </button>
-                  </div>
-                )}
-                
-                <button 
-                  onClick={() => setShowModal(false)}
-                  className="w-full py-3 text-maroon/40 font-bold text-xs uppercase tracking-widest hover:text-maroon transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-    </section>
-  );
-};
-
-export const InstructorShowcase = () => {
-  return (
-    <section id="instructors" className="py-20 px-8 bg-cream">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-black italic tracking-tighter text-maroon mb-4">Our Instructors</h2>
-          <p className="text-maroon/60 max-w-2xl mx-auto">
-            Learn from the best in the industry. Our teachers bring years of professional experience to every class.
+        <div className="text-center mb-20">
+          <h2 className="text-5xl md:text-7xl font-black text-maroon italic tracking-tighter uppercase leading-[0.85]">
+            Enterprise-Grade <br /> <span className="text-gold">Cloud Infrastructure.</span>
+          </h2>
+          <p className="text-maroon/40 font-mono text-[10px] mt-8 uppercase tracking-[0.4em]">
+            The technical backbone for the world's leading dance studios
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {INSTRUCTORS.map((instructor) => (
-            <motion.div 
-              key={instructor.id}
-              whileHover={{ y: -10 }}
-              className="bg-white rounded-3xl p-8 shadow-sm border border-maroon/5 flex flex-col items-center text-center group"
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          {features.map((feature, idx) => (
+            <motion.div
+              key={feature.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1 }}
+              className="group p-10 rounded-[3rem] bg-cream/20 border border-maroon/5 hover:bg-maroon hover:text-cream transition-all duration-500 shadow-sm hover:shadow-2xl relative overflow-hidden"
             >
-              <div className="relative mb-6">
-                <img 
-                  src={instructor.avatar} 
-                  alt={instructor.name} 
-                  className="w-32 h-32 rounded-full object-cover border-4 border-cream shadow-xl group-hover:border-gold transition-colors"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute -bottom-2 -right-2 bg-maroon text-cream px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
-                  Expert
-                </div>
+              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                <feature.icon size={120} />
               </div>
-              <h3 className="text-2xl font-black italic text-maroon mb-2">{instructor.name}</h3>
-              <p className="text-sm text-maroon/60 leading-relaxed mb-6">
-                {instructor.bio}
+              
+              <div className="w-16 h-16 bg-maroon text-cream rounded-2xl flex items-center justify-center mb-8 group-hover:bg-gold group-hover:text-maroon transition-colors shadow-lg">
+                <feature.icon size={32} />
+              </div>
+              
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-gold">
+                  {feature.tag}
+                </span>
+                <div className="h-px flex-1 bg-maroon/10 group-hover:bg-cream/20" />
+              </div>
+
+              <h3 className="text-3xl font-black italic tracking-tight mb-4 uppercase leading-none">
+                {feature.title}
+              </h3>
+              <p className="text-sm font-medium opacity-60 leading-relaxed max-w-[90%]">
+                {feature.description}
               </p>
-              <button className="mt-auto text-gold font-bold text-xs uppercase tracking-widest hover:underline">
-                View Full Profile
-              </button>
+              
+              <div className="mt-10 pt-8 border-t border-maroon/10 group-hover:border-cream/10 flex items-center justify-between">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[8px] font-mono uppercase tracking-widest opacity-40">System Status</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-green-500 group-hover:text-green-400">{feature.status}</span>
+                </div>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+              </div>
             </motion.div>
           ))}
         </div>
@@ -249,37 +88,99 @@ export const InstructorShowcase = () => {
   );
 };
 
+export const TeamSection = () => {
+  const team = [
+    {
+      name: "Du",
+      role: "Founder & CEO",
+      bio: "10+ years deep-dive in Street Dance industry. Veteran dancer turned tech innovator. Bridging the gap between artistic expression and cloud efficiency.",
+      specialty: "Market Vision & Product Strategy"
+    },
+    {
+      name: "Phat",
+      role: "CTO (Chief Technology Officer)",
+      bio: "Ph.D. in Computer Science. Architect of S-sync's proprietary scheduling engine and multi-tenant cloud infrastructure. Expert in Scalable Systems.",
+      specialty: "Cloud Computing & Algorithmic Optimization"
+    },
+    {
+      name: "Princess",
+      role: "CFO (Chief Financial Officer)",
+      bio: "Expert in SaaS financial modeling and cross-border payment scaling. Managing the fiscal health and investment strategy for S-sync’s global expansion.",
+      specialty: "Revenue Architecture & Financial Growth"
+    }
+  ];
+
+  return (
+    <div className="bg-cream/50 py-24 px-8 rounded-[60px] mt-20 border border-maroon/5 shadow-sm">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div>
+            <h2 className="text-maroon text-5xl font-black italic tracking-tighter leading-none">THE CORE ARCHITECTS</h2>
+            <p className="text-maroon/40 font-bold uppercase tracking-widest text-xs mt-4">Executive Leadership Team</p>
+          </div>
+          <div className="h-px flex-1 bg-maroon/10 mx-12 hidden md:block mb-4" />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {team.map((member) => (
+            <motion.div 
+              key={member.name} 
+              whileHover={{ y: -10 }}
+              className="bg-white p-10 rounded-[40px] border border-maroon/5 shadow-sm hover:shadow-2xl transition-all group relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-2 h-full bg-maroon opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="w-12 h-1 bg-maroon mb-8 group-hover:w-full transition-all duration-500 rounded-full"></div>
+              <h3 className="text-3xl font-black italic text-maroon">{member.name}</h3>
+              <p className="text-gold font-black text-[10px] uppercase tracking-[0.2em] mt-2">{member.role}</p>
+              <p className="text-maroon/60 text-sm mt-6 leading-relaxed font-medium">{member.bio}</p>
+              <div className="mt-8 pt-8 border-t border-maroon/5 flex flex-col gap-1">
+                <span className="text-[10px] font-bold text-maroon/30 uppercase tracking-widest">Focus Area</span>
+                <p className="text-xs font-black italic text-maroon">{member.specialty}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const AboutUs = () => {
   return (
-    <section id="about" className="py-20 px-8 bg-maroon text-cream overflow-hidden">
+    <section id="about" className="py-24 px-8 bg-cream overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-24">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl font-black italic tracking-tighter mb-8">Elevating the Studio Experience</h2>
-            <div className="space-y-6 text-cream/80 text-lg leading-relaxed">
+            <div className="inline-block px-4 py-1 bg-maroon/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-maroon mb-6">
+              Our Mission
+            </div>
+            <h2 className="text-6xl font-black italic tracking-tighter text-maroon leading-[0.9] mb-8">
+              Architecting the Future of <span className="text-gold">Dance Commerce.</span>
+            </h2>
+            <div className="space-y-6 text-maroon/70 text-lg leading-relaxed font-medium">
               <p>
-                S-sync was born from a vision to bridge the gap between professional dance training and modern studio management. We believe that every artist deserves a space that inspires growth, and every studio owner deserves tools that simplify excellence.
+                S-sync is more than a management tool—it's a high-performance cloud infrastructure built specifically for the street dance industry. We've combined deep industry expertise with cutting-edge SaaS architecture to help studio owners scale globally.
               </p>
               <p>
-                Our flagship Paris location features state-of-the-art acoustics, specialized sprung floors, and a community of world-class instructors dedicated to your artistic journey.
+                From our proprietary multi-tenant scheduling engine to automated financial reconciliation, we provide the technical backbone that allows artists to focus on what they do best: creating.
               </p>
             </div>
-            <div className="mt-10 flex gap-8">
+            <div className="mt-12 grid grid-cols-3 gap-8 border-t border-maroon/10 pt-12">
               <div>
-                <p className="text-4xl font-black italic text-gold">15+</p>
-                <p className="text-[10px] uppercase tracking-widest font-bold opacity-60">Expert Teachers</p>
+                <p className="text-4xl font-black italic text-maroon">15+</p>
+                <p className="text-[10px] uppercase tracking-widest font-bold opacity-40">Partner Studios</p>
               </div>
               <div>
-                <p className="text-4xl font-black italic text-gold">2k+</p>
-                <p className="text-[10px] uppercase tracking-widest font-bold opacity-60">Active Students</p>
+                <p className="text-4xl font-black italic text-maroon">99.9%</p>
+                <p className="text-[10px] uppercase tracking-widest font-bold opacity-40">System Uptime</p>
               </div>
               <div>
-                <p className="text-4xl font-black italic text-gold">Studio A/B</p>
-                <p className="text-[10px] uppercase tracking-widest font-bold opacity-60">Premium Spaces</p>
+                <p className="text-4xl font-black italic text-maroon">24ms</p>
+                <p className="text-[10px] uppercase tracking-widest font-bold opacity-40">Server Latency</p>
               </div>
             </div>
           </motion.div>
@@ -290,16 +191,233 @@ export const AboutUs = () => {
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="aspect-square rounded-[60px] overflow-hidden border-8 border-cream/10 rotate-3">
+            <div className="aspect-[4/5] rounded-[80px] overflow-hidden border-[12px] border-white shadow-2xl rotate-2">
               <img 
-                src="https://picsum.photos/seed/studio/800/800" 
-                alt="Studio Interior" 
+                src="https://picsum.photos/seed/tech/800/1000" 
+                alt="Cloud Infrastructure" 
                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                 referrerPolicy="no-referrer"
               />
             </div>
-            <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-gold rounded-[40px] -z-10 -rotate-6 opacity-20 blur-2xl" />
+            <div className="absolute -top-10 -right-10 w-48 h-48 bg-gold rounded-full -z-10 animate-pulse opacity-20 blur-3xl" />
           </motion.div>
+        </div>
+
+        <TeamSection />
+      </div>
+    </section>
+  );
+};
+
+export const PricingAndRegister = () => {
+  // 状态 1: 'selecting' (选套餐), 'registering' (填资料), 'success' (完成)
+  const [step, setStep] = React.useState('selecting');
+  const [selectedPlan, setSelectedPlan] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(false);
+
+  const plans = [
+    { 
+      id: 'core', 
+      name: "CORE / Starter", 
+      price: "€99", 
+      period: "/mo",
+      description: "Ideal for independent boutique studios looking to digitize.",
+      features: ["100 Members", "Basic Engine", "Email Support", "Community Access"],
+      highlight: false
+    },
+    { 
+      id: 'scale', 
+      name: "SCALE / Pro", 
+      price: "€249", 
+      period: "/mo",
+      description: "Advanced tools for growing brands and multi-location studios.",
+      features: ["Multi-Tenant", "White-label Logo", "Dr. Phat's Tech Team", "Advanced Analytics"],
+      highlight: true
+    },
+    { 
+      id: 'elite', 
+      name: "ELITE / Enterprise", 
+      price: "Custom", 
+      period: "",
+      description: "For global dance franchises requiring maximum security and scale.",
+      features: ["Dedicated Server", "API Suite", "Consulting with Du", "24/7 VIP Support"],
+      highlight: false
+    }
+  ];
+
+  // 处理点击套餐
+  const handleSelectPlan = (plan: any) => {
+    setLoading(true);
+    setTimeout(() => {
+      setSelectedPlan(plan);
+      setStep('registering');
+      setLoading(false);
+    }, 1200); // 模拟云端处理延迟，增加科技感
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-[600px] bg-cream flex flex-col items-center justify-center">
+        <motion.div 
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+          className="w-16 h-16 border-4 border-maroon border-t-transparent rounded-full"
+        />
+        <p className="mt-8 font-black text-maroon animate-pulse tracking-[0.3em] text-xs uppercase">Provisioning Cloud Instance...</p>
+      </div>
+    );
+  }
+
+  return (
+    <section id="pricing" className="py-24 px-8 bg-cream overflow-hidden">
+      <AnimatePresence mode="wait">
+        {step === 'selecting' && (
+          <motion.div 
+            key="selecting"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="max-w-7xl mx-auto"
+          >
+            <div className="text-center mb-20">
+              <h2 className="text-5xl md:text-6xl font-black text-maroon italic tracking-tighter uppercase">Activate Your Engine</h2>
+              <p className="text-maroon/40 font-bold mt-4 uppercase tracking-[0.3em] text-[10px]">Select a SaaS Tier to start your 14-day free trial</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+              {plans.map((plan) => (
+                <motion.div 
+                  key={plan.id} 
+                  whileHover={{ y: -10 }}
+                  className={`flex flex-col p-10 rounded-[2.5rem] transition-all duration-500 ${
+                    plan.highlight 
+                    ? 'bg-white border-4 border-maroon shadow-[0_35px_60px_-15px_rgba(128,0,32,0.2)]' 
+                    : 'bg-white/50 border border-maroon/10'
+                  }`}
+                >
+                  {plan.highlight && (
+                    <div className="flex justify-center -mt-14 mb-8">
+                      <span className="bg-maroon text-white text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-widest shadow-lg">
+                        Most Popular
+                      </span>
+                    </div>
+                  )}
+                  
+                  <h3 className="text-2xl font-black text-maroon italic tracking-tight uppercase">{plan.name}</h3>
+                  <div className="mt-6 flex items-baseline gap-1">
+                    <span className="text-5xl font-black text-maroon">{plan.price}</span>
+                    <span className="text-maroon/40 text-sm font-bold">{plan.period}</span>
+                  </div>
+                  <p className="text-xs text-maroon/60 mt-4 font-medium leading-relaxed">{plan.description}</p>
+
+                  <ul className="mt-10 space-y-5 flex-1">
+                    {plan.features.map(f => (
+                      <li key={f} className="flex items-start text-sm font-medium text-maroon/70">
+                        <CheckCircle2 className="text-gold mr-3 shrink-0" size={18} /> 
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button 
+                    onClick={() => handleSelectPlan(plan)}
+                    className={`w-full mt-12 py-5 rounded-2xl font-black italic text-lg uppercase tracking-widest transition-all shadow-xl ${
+                      plan.highlight 
+                      ? 'bg-maroon text-cream hover:bg-maroon-dark' 
+                      : 'bg-maroon/5 text-maroon hover:bg-maroon hover:text-cream'
+                    }`}
+                  >
+                    Get Started
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {step === 'registering' && (
+          <motion.div 
+            key="registering"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            className="max-w-xl mx-auto bg-white p-12 rounded-[3rem] shadow-2xl border border-maroon/10"
+          >
+            <button 
+              onClick={() => setStep('selecting')} 
+              className="text-maroon font-black text-[10px] uppercase tracking-widest mb-8 flex items-center gap-2 hover:opacity-70 transition-opacity"
+            >
+              ← Change Plan ({selectedPlan?.name})
+            </button>
+            
+            <h2 className="text-3xl font-black text-maroon italic uppercase mb-2 tracking-tighter text-center">Studio Setup</h2>
+            <p className="text-center text-maroon/40 text-[10px] font-bold mb-10 uppercase tracking-[0.3em]">Powered by S-sync Technology</p>
+
+            <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setStep('success'); }}>
+              <div>
+                <label className="text-[10px] font-black uppercase text-maroon/40 mb-2 block tracking-widest">Studio Name (Tenant Name)</label>
+                <input required type="text" placeholder="e.g. OKEY Dance Studio" className="w-full p-4 bg-cream/30 border border-maroon/5 rounded-xl focus:border-maroon outline-none transition-all font-bold text-maroon" />
+              </div>
+              
+              {selectedPlan?.id !== 'core' && (
+                <div>
+                  <label className="text-[10px] font-black uppercase text-maroon/40 mb-2 block tracking-widest">Brand Accent Color (White-label)</label>
+                  <div className="flex gap-4 items-center">
+                    <input type="color" defaultValue="#800020" className="w-16 h-12 rounded-xl cursor-pointer bg-cream/30 p-1 border border-maroon/5" />
+                    <span className="text-[10px] font-bold text-maroon/40 uppercase tracking-widest">Select your brand identity</span>
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="text-[10px] font-black uppercase text-maroon/40 mb-2 block tracking-widest">CEO / Admin Email</label>
+                <input required type="email" placeholder="owner@studio.com" className="w-full p-4 bg-cream/30 border border-maroon/5 rounded-xl focus:border-maroon outline-none transition-all font-bold text-maroon" />
+              </div>
+
+              <button type="submit" className="w-full py-5 bg-maroon text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-maroon/30 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                Initialize Cloud Platform
+              </button>
+            </form>
+          </motion.div>
+        )}
+
+        {step === 'success' && (
+          <motion.div 
+            key="success"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-2xl mx-auto bg-maroon p-16 rounded-[4rem] flex flex-col items-center text-center text-cream shadow-2xl"
+          >
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", damping: 12 }}
+              className="w-24 h-24 bg-cream/10 rounded-full flex items-center justify-center mb-10"
+            >
+              <ShieldCheck className="text-gold" size={48} />
+            </motion.div>
+            <h2 className="text-5xl font-black italic tracking-tighter uppercase mb-6">Instance Ready!</h2>
+            <p className="opacity-80 font-bold uppercase tracking-[0.2em] text-[10px] leading-loose max-w-sm">
+              Your studio infrastructure has been successfully provisioned on the S-sync Cloud. 
+              Check your email for access to the Merchant Dashboard.
+            </p>
+            <button 
+              onClick={() => setStep('selecting')}
+              className="mt-12 bg-cream text-maroon px-12 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-gold hover:text-maroon transition-all shadow-xl"
+            >
+              Back to Main Console
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 底部保障 */}
+      <div className="mt-20 text-center">
+        <div className="inline-flex items-center gap-2 px-6 py-3 bg-white rounded-full border border-maroon/5 shadow-sm">
+          <ShieldCheck className="text-gold" size={16} />
+          <span className="text-maroon/40 text-[10px] font-bold uppercase tracking-[0.2em]">
+            Secure Cloud Payment Powered by S-sync Finance & Princess Strategy
+          </span>
         </div>
       </div>
     </section>

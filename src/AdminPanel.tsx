@@ -17,33 +17,36 @@ export const DashboardView = () => {
       <header className="flex items-end justify-between">
         <div>
           <h1 className="text-4xl font-black italic tracking-tighter text-maroon">
-            Studio Overview
+            Platform Insights
           </h1>
           <p className="text-maroon/50 font-medium mt-1">
-            High-level analytics and performance metrics.
+            Global performance and system health metrics.
           </p>
         </div>
-        <div className="flex gap-4">
-          <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-maroon/5 flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-[10px] font-bold text-maroon/40 uppercase tracking-widest">Active Students</p>
-              <p className="text-xl font-black italic">1,284</p>
-            </div>
-            <div className="w-10 h-10 bg-maroon/5 rounded-full flex items-center justify-center text-maroon">
-              <Users size={20} />
-            </div>
-          </div>
-          <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-maroon/5 flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-[10px] font-bold text-maroon/40 uppercase tracking-widest">Today's Revenue</p>
-              <p className="text-xl font-black italic">$2,450</p>
-            </div>
-            <div className="w-10 h-10 bg-gold/10 rounded-full flex items-center justify-center text-gold">
-              <CreditCard size={20} />
-            </div>
-          </div>
-        </div>
       </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Platform Transactions */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-maroon/5">
+          <p className="text-[10px] font-bold text-maroon/40 uppercase tracking-widest">Platform Transactions</p>
+          <h3 className="text-3xl font-black italic text-maroon mt-1">1,284</h3>
+          <p className="text-[10px] text-green-600 font-bold mt-2">↑ 12% across all studios</p>
+        </div>
+
+        {/* System Health */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-maroon/5">
+          <p className="text-[10px] font-bold text-maroon/40 uppercase tracking-widest">System Health</p>
+          <h3 className="text-3xl font-black italic text-green-500 mt-1">Operational</h3>
+          <p className="text-[10px] text-maroon/40 font-bold mt-2">Paris AWS Server: 24ms</p>
+        </div>
+
+        {/* Active Licenses */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-maroon/5">
+          <p className="text-[10px] font-bold text-maroon/40 uppercase tracking-widest">Active Licenses</p>
+          <h3 className="text-3xl font-black italic text-maroon mt-1">15 Studios</h3>
+          <p className="text-[10px] text-blue-600 font-bold mt-2">3 Pending Setup</p>
+        </div>
+      </div>
 
       <div className="bento-grid">
         {/* Analytics Card */}
@@ -163,6 +166,62 @@ export const DashboardView = () => {
                 <div className="w-2 h-2 rounded-full bg-tan" />
                 <span className="text-xs font-medium">Single Drop-in (10%)</span>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const ThemeSettingsView = ({ primaryColor, setPrimaryColor }: { primaryColor: string, setPrimaryColor: (c: string) => void }) => {
+  const themes = [
+    { name: 'Classic Maroon', color: '#800020' },
+    { name: 'Midnight Blue', color: '#191970' },
+    { name: 'Forest Green', color: '#013220' },
+    { name: 'Royal Purple', color: '#4B0082' },
+    { name: 'Slate Gray', color: '#2F4F4F' },
+  ];
+
+  return (
+    <div className="flex flex-col gap-8">
+      <header>
+        <h1 className="text-4xl font-black italic tracking-tighter text-maroon">
+          White-label Config
+        </h1>
+        <p className="text-maroon/50 font-medium mt-1">
+          Customize the platform branding for your client studios.
+        </p>
+      </header>
+
+      <div className="bg-white rounded-3xl p-8 shadow-sm border border-maroon/5 max-w-2xl">
+        <h2 className="text-xl font-bold italic mb-6">Brand Identity</h2>
+        
+        <div className="space-y-8">
+          <div>
+            <label className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-4 block">Primary Brand Color</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {themes.map((theme) => (
+                <button
+                  key={theme.color}
+                  onClick={() => setPrimaryColor(theme.color)}
+                  className={`flex items-center gap-3 p-3 rounded-2xl border-2 transition-all ${
+                    primaryColor === theme.color ? 'border-maroon bg-maroon/5' : 'border-transparent bg-maroon/5 hover:border-maroon/20'
+                  }`}
+                >
+                  <div className="w-6 h-6 rounded-full" style={{ backgroundColor: theme.color }} />
+                  <span className="text-xs font-bold">{theme.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-8 border-t border-maroon/10">
+            <h3 className="text-sm font-bold mb-4">Preview</h3>
+            <div className="p-6 rounded-2xl border-2 border-dashed border-maroon/20 flex items-center justify-center">
+              <button className="px-8 py-3 bg-maroon text-cream rounded-xl text-xs font-bold uppercase tracking-widest">
+                Sample Brand Button
+              </button>
             </div>
           </div>
         </div>

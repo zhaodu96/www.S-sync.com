@@ -25,3 +25,12 @@ export interface PrivateLesson {
   endTime: string;
   date: string;
 }
+
+export interface Booking {
+  id: string;
+  title: string;
+  instructor: string;
+  time: string;
+  date: string;
+  location: string;
+}

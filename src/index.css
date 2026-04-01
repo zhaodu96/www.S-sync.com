@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-maroon: #800020;
+  --color-maroon: var(--primary-color, #800020);
+  --color-maroon-dark: var(--primary-color-dark, #600018);
   --color-cream: #F5F5DC;
   --color-gold: #D4AF37;
   --color-tan: #C2B280;
-  --color-maroon-dark: #600018;
 }
 
 @layer base {
